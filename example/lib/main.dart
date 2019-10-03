@@ -34,10 +34,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   initSavetoPath()async{
-    //read and write
-    //image max 300px X 300px
-    final filename = 'yourlogo.png';
-    var bytes = await rootBundle.load("assets/images/yourlogo.png");
+    final filename = 'logo.jpg';
+    var bytes = await rootBundle.load("assets/images/logo.jpg");
     String dir = (await getApplicationDocumentsDirectory()).path;
     writeToFile(bytes,'$dir/$filename');
     setState(() {
@@ -171,42 +169,11 @@ class _MyAppState extends State<MyApp> {
     setState(() => _pressed = true);
   }
 
-//write to app path
   Future<void> writeToFile(ByteData data, String path) {
     final buffer = data.buffer;
     return new File(path).writeAsBytes(
         buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
-
-// testprint move to different class
-//  void _tesPrint() async {
-//    //SIZE
-//    // 0- normal size text
-//    // 1- only bold text
-//    // 2- bold with medium text
-//    // 3- bold with large text
-//    //ALIGN
-//    // 0- ESC_ALIGN_LEFT
-//    // 1- ESC_ALIGN_CENTER
-//    // 2- ESC_ALIGN_RIGHT
-//    bluetooth.isConnected.then((isConnected) {
-//      if (isConnected) {
-//        bluetooth.printCustom("HEADER",3,1);
-//        bluetooth.printNewLine();
-//        bluetooth.printImage(pathImage);
-//        bluetooth.printNewLine();
-//        bluetooth.printCustom("Body left",1,0);
-//        bluetooth.printCustom("Body right",0,2);
-//        bluetooth.printNewLine();
-//        bluetooth.printCustom("Terimakasih",2,1);
-//        bluetooth.printNewLine();
-//        bluetooth.printQRcode("Insert Your Own Text to Generate");
-//        bluetooth.printNewLine();
-//        bluetooth.printNewLine();
-//        bluetooth.paperCut();
-//      }
-//    });
-//  }
 
   Future show(
       String message, {

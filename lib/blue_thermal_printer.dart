@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:sprintf/sprintf.dart';
 
 class BlueThermalPrinter {
   static const int STATE_OFF = 10;
@@ -14,21 +15,32 @@ class BlueThermalPrinter {
   static const int CONNECTED = 1;
   static const int DISCONNECTED = 0;
 
+  /// options for paper size 48, 58, 80
+  /// you can change this sakkarepmu
+  static const int PAPERSIZE = 48;
+
+  static int get fixedCharLength {
+    return PAPERSIZE - 6;
+  }
+
+  static String printCustomLeftRight(String left, String right) {
+    return sprintf(
+        "%-${fixedCharLength ~/ 2}s%${fixedCharLength ~/ 2}s", [left, right]);
+  }
+
   static const String namespace = 'blue_thermal_printer';
 
   static const MethodChannel _channel =
       const MethodChannel('$namespace/methods');
 
   static const EventChannel _readChannel =
-  const EventChannel('$namespace/read');
+      const EventChannel('$namespace/read');
 
   static const EventChannel _stateChannel =
-  const EventChannel('$namespace/state');
+      const EventChannel('$namespace/state');
 
   final StreamController<MethodCall> _methodStreamController =
-  new StreamController.broadcast();
-
-  //Stream<MethodCall> get _methodStream => _methodStreamController.stream;
+      new StreamController.broadcast();
 
   BlueThermalPrinter._() {
     _channel.setMethodCallHandler((MethodCall call) {
@@ -73,23 +85,47 @@ class BlueThermalPrinter {
   Future<dynamic> writeBytes(Uint8List message) =>
       _channel.invokeMethod('writeBytes', {'message': message});
 
-  Future<dynamic> printCustom(String message,int size, int align) =>
-      _channel.invokeMethod('printCustom', {'message': message, 'size': size, 'align': align});
+  Future<dynamic> printCustom(String message, int size, int align) =>
+      _channel.invokeMethod(
+          'printCustom', {'message': message, 'size': size, 'align': align});
 
   Future<dynamic> printNewLine() => _channel.invokeMethod('printNewLine');
 
   Future<dynamic> paperCut() => _channel.invokeMethod('paperCut');
 
-  Future<dynamic> printImage(String pathImage) =>
-      _channel.invokeMethod('printImage', {'pathImage': pathImage});
+  Future<dynamic> drawLineStripe(int size, int align, {String char = "-"}) {
+    String line = "";
 
-  Future<dynamic> printQRcode(String textToQR, int width, int height, int align) =>
-      _channel.invokeMethod('printQRcode', {'textToQR': textToQR, 'width': width, 'height': height, 'align': align});
+    for (int i = 0; i <= fixedCharLength; i++) {
+      line += char;
+    }
 
-  Future<dynamic> printLeftRight(String string1,String string2,int size) =>
-      _channel.invokeMethod('printLeftRight', {'string1': string1, 'string2': string2,'size': size });
+    return printCustom(line, size, align);
+  }
+
+  Future<dynamic> printImage(String pathImage, int align, int yPadding) =>
+      _channel.invokeMethod('printImage', {
+        'pathImage': pathImage,
+        'align': align,
+        'paperSize': PAPERSIZE,
+        'yPadding': yPadding
+      });
+
+  Future<dynamic> printQRcode(
+          String textToQR, int width, int height, int align) =>
+      _channel.invokeMethod('printQRcode', {
+        'textToQR': textToQR,
+        'width': width,
+        'height': height,
+        'align': align
+      });
+
+  Future<dynamic> printLeftRight(
+      String string1, String string2, int size, int align) {
+    return this
+        .printCustom(printCustomLeftRight(string1, string2), size, align);
+  }
 }
-
 
 class BluetoothDevice {
   final String name;
@@ -104,11 +140,11 @@ class BluetoothDevice {
         address = map['address'];
 
   Map<String, dynamic> toMap() => {
-    'name': this.name,
-    'address': this.address,
-    'type': this.type,
-    'connected': this.connected,
-  };
+        'name': this.name,
+        'address': this.address,
+        'type': this.type,
+        'connected': this.connected,
+      };
 
   operator ==(Object other) {
     return other is BluetoothDevice && other.address == this.address;

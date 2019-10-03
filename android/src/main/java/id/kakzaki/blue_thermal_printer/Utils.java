@@ -1,6 +1,9 @@
 package id.kakzaki.blue_thermal_printer;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -8,17 +11,83 @@ import java.util.List;
 
 public class Utils {
     // UNICODE 0x23 = #
-    public static final byte[] UNICODE_TEXT = new byte[] {0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
+    public static final byte[] UNICODE_TEXT = new byte[]{0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
             0x23, 0x23, 0x23};
 
     private static String hexStr = "0123456789ABCDEF";
-    private static String[] binaryArray = { "0000", "0001", "0010", "0011",
+    private static String[] binaryArray = {"0000", "0001", "0010", "0011",
             "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
-            "1100", "1101", "1110", "1111" };
+            "1100", "1101", "1110", "1111"};
 
-    public static byte[] decodeBitmap(Bitmap bmp){
+    private static Bitmap.Config getConfig(Bitmap bitmap) {
+        Bitmap.Config config = bitmap.getConfig();
+        if (config == null) {
+            config = Bitmap.Config.ARGB_8888;
+        }
+        return config;
+    }
+
+    public static Bitmap resizeBitmapByScale(
+            Bitmap bitmap, float scale, boolean recycle) {
+        int width = Math.round(bitmap.getWidth() * scale);
+        int height = Math.round(bitmap.getHeight() * scale);
+
+        if (width == bitmap.getWidth()
+                && height == bitmap.getHeight()) return bitmap;
+
+        Bitmap target = Bitmap.createBitmap(width, height, getConfig(bitmap));
+
+        Canvas canvas = new Canvas(target);
+        canvas.scale(scale, scale);
+
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        if (recycle) bitmap.recycle();
+
+        return target;
+    }
+
+    /**
+     * give padding and resize paper
+     * for best size
+     *
+     * @param src
+     * @param xPadding
+     * @param yPadding
+     * @param finalPaperSize
+     * @return
+     */
+    public static Bitmap pad(Bitmap src, int xPadding, int yPadding, int finalPaperSize) {
+        int actualWidth = src.getWidth();
+        int actualHeight = src.getHeight();
+        int maxDimension = actualWidth > actualHeight ? actualWidth : actualHeight;
+        int minDimension = actualWidth < actualHeight ? actualWidth : actualHeight;
+        Bitmap resizedImage = null;
+
+        if (finalPaperSize > maxDimension) {
+            float mod = ((float) maxDimension) / minDimension;
+
+            resizedImage = resizeBitmapByScale(src, mod, true);
+            actualWidth = resizedImage.getWidth();
+            actualHeight = resizedImage.getHeight();
+        }
+
+        Bitmap outputimage = Bitmap.createBitmap(actualWidth + xPadding,
+                actualHeight + yPadding, Bitmap.Config.ARGB_8888);
+
+        Canvas can = new Canvas(outputimage);
+        can.drawARGB(255, 255, 255, 255); //This represents White color
+        can.drawBitmap(resizedImage == null ? src : resizedImage, xPadding,
+                Math.round((float) yPadding / 2),
+                null);
+
+        return outputimage;
+    }
+
+    public static byte[] decodeBitmap(Bitmap bmp) {
         int bmpWidth = bmp.getWidth();
         int bmpHeight = bmp.getHeight();
 
@@ -69,6 +138,7 @@ public class Utils {
         } else if (widthHexString.length() == 1) {
             widthHexString = "0" + widthHexString;
         }
+
         widthHexString = widthHexString + "00";
 
         String heightHexString = Integer.toHexString(bmpHeight);
@@ -81,7 +151,7 @@ public class Utils {
         heightHexString = heightHexString + "00";
 
         List<String> commandList = new ArrayList<String>();
-        commandList.add(commandHexString+widthHexString+heightHexString);
+        commandList.add(commandHexString + widthHexString + heightHexString);
         commandList.addAll(bmpHexList);
 
         return hexList2Byte(commandList);
