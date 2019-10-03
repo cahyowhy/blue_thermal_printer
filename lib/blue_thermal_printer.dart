@@ -96,7 +96,7 @@ class BlueThermalPrinter {
   Future<dynamic> drawLineStripe(int size, int align, {String char = "-"}) {
     String line = "";
 
-    for (int i = 0; i <= fixedCharLength; i++) {
+    for (int i = 1; i <= fixedCharLength; i++) {
       line += char;
     }
 
