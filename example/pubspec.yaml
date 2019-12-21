@@ -36,6 +36,7 @@ flutter:
   assets:
     - assets/images/yourlogo.png
     - assets/images/logo.jpg
+    - assets/images/fb-print.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
