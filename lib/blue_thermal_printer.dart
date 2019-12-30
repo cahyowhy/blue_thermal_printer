@@ -24,8 +24,33 @@ class BlueThermalPrinter {
   }
 
   static String printCustomLeftRight(String left, String right) {
-    return sprintf(
-        "%-${fixedCharLength ~/ 2}s%${fixedCharLength ~/ 2}s", [left, right]);
+    int totalChar = BlueThermalPrinter.fixedCharLength;
+    int leftChar = totalChar;
+    int rightChar = totalChar;
+
+    String leftFormated = left;
+    String rightFormated = right;
+
+    if (left.length > totalChar) {
+      if (left.length + right.length <= 42) {
+        leftChar = left.length;
+        rightChar -= leftChar - totalChar;
+      } else {
+        leftFormated = left.substring(0, totalChar);
+      }
+    }
+
+    if (right.length > totalChar) {
+      if (right.length + left.length <= 42) {
+        rightChar = right.length;
+        leftChar -= rightChar - totalChar;
+      } else {
+        rightFormated = right.substring(0, totalChar);
+      }
+    }
+
+    return sprintf("%-${totalChar ~/ 2}s%${totalChar ~/ 2}s",
+        [leftFormated, rightFormated]);
   }
 
   static const String namespace = 'blue_thermal_printer';
@@ -110,6 +135,9 @@ class BlueThermalPrinter {
         'paperSize': PAPERSIZE,
         'yPadding': yPadding
       });
+
+  Future<dynamic> printImageCustom(String pathImage) =>
+      _channel.invokeMethod('printImageCustom', {'pathImage': pathImage});
 
   Future<dynamic> printQRcode(
           String textToQR, int width, int height, int align) =>

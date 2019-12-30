@@ -115,7 +115,7 @@ packages:
     source: hosted
     version: "1.5.5"
   sprintf:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: sprintf
       url: "https://pub.dartlang.org"

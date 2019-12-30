@@ -16,7 +16,7 @@ class TestPrint {
   sample(String pathImage) async {
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
-        bluetooth.printImage(pathImage, 1, 64);
+       bluetooth.printImageCustom(pathImage);
         bluetooth.printNewLine();
 
         bluetooth.printCustom("Cek", 3, 1);

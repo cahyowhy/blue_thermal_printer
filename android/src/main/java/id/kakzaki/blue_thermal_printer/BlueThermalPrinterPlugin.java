@@ -243,6 +243,16 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
                 }
                 break;
 
+            // case "printImageCustom":
+            //     if (arguments.containsKey("pathImage")) {
+            //         String pathImage = (String) arguments.get("pathImage");
+
+            //         printImageCustom(result, pathImage);
+            //     } else {
+            //         result.error("invalid_argument", "argument 'pathImage' not found", null);
+            //     }
+            //     break;
+
             case "printQRcode":
                 if (arguments.containsKey("textToQR")) {
                     String textToQR = (String) arguments.get("textToQR");
@@ -533,6 +543,31 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
             result.error("write_error", ex.getMessage(), exceptionToString(ex));
         }
     }
+
+    // private void printImageCustom(Result result, String pathImage) {
+    //     if (THREAD == null) {
+    //         result.error("write_error", "not connected", null);
+
+    //         return;
+    //     }
+
+    //     try {
+    //         Bitmap bmp = BitmapFactory.decodeFile(pathImage);
+
+    //         if (bmp != null) {
+    //             byte[] command = Utils.drawMonoChrome(bmp);
+
+    //             THREAD.write(command);
+    //         } else {
+    //             Log.e("Print Photo error", "the file isn't exists");
+    //         }
+
+    //         result.success(true);
+    //     } catch (Exception ex) {
+    //         Log.e(TAG, ex.getMessage(), ex);
+    //         result.error("write_error", ex.getMessage(), exceptionToString(ex));
+    //     }
+    // }
 
     private void printImage(Result result, String pathImage, int align,
                             int paperSize, int yPadding) {

@@ -34,8 +34,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   initSavetoPath()async{
-    final filename = 'logo.jpg';
-    var bytes = await rootBundle.load("assets/images/logo.jpg");
+    final filename = 'image_err.jpg';
+    var bytes = await rootBundle.load("assets/images/image_err.jpg");
     String dir = (await getApplicationDocumentsDirectory()).path;
     writeToFile(bytes,'$dir/$filename');
     setState(() {

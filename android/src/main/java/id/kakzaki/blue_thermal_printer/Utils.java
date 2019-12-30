@@ -2,10 +2,13 @@ package id.kakzaki.blue_thermal_printer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+// import android.graphics.ColorMatrix;
+// import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 
+// import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +89,33 @@ public class Utils {
 
         return outputimage;
     }
+
+    // public static byte[] drawMonoChrome(Bitmap src) {
+    //     int width = src.getWidth();
+    //     int height = src.getHeight();
+
+    //     ColorMatrix ma = new ColorMatrix();
+    //     ma.setSaturation(0);
+
+    //     Bitmap bmpMonochrome = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+    //     Paint paint = new Paint();
+    //     paint.setColorFilter(new ColorMatrixColorFilter(ma));
+
+    //     Canvas canvas = new Canvas(bmpMonochrome);
+    //     canvas.drawARGB(255, 255, 255, 255); //This represents White color
+    //     canvas.drawBitmap(src, 0, 0, paint);
+
+    //     int size = bmpMonochrome.getByteCount();
+    //     byte[] bytes = new byte[size];
+    //     ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+
+    //     bmpMonochrome.copyPixelsToBuffer(byteBuffer);
+    //     byteBuffer.rewind();
+    //     byteBuffer.get(bytes);
+
+    //     return bytes;
+    // }
 
     public static byte[] decodeBitmap(Bitmap bmp) {
         int bmpWidth = bmp.getWidth();
