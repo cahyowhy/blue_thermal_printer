@@ -67,11 +67,10 @@ public class Utils {
         int actualWidth = src.getWidth();
         int actualHeight = src.getHeight();
         int maxDimension = actualWidth > actualHeight ? actualWidth : actualHeight;
-        int minDimension = actualWidth < actualHeight ? actualWidth : actualHeight;
         Bitmap resizedImage = null;
 
-        if (finalPaperSize > maxDimension) {
-            float mod = ((float) maxDimension) / minDimension;
+        if (finalPaperSize < maxDimension) {
+            float mod = finalPaperSize / ((float) maxDimension);
 
             resizedImage = resizeBitmapByScale(src, mod, true);
             actualWidth = resizedImage.getWidth();
