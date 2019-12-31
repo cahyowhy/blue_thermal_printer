@@ -24,7 +24,7 @@ class BlueThermalPrinter {
   }
 
   static String printCustomLeftRight(String left, String right) {
-    int totalChar = BlueThermalPrinter.fixedCharLength;
+    int totalChar = BlueThermalPrinter.fixedCharLength ~/ 2;
     int leftChar = totalChar;
     int rightChar = totalChar;
 
@@ -32,7 +32,7 @@ class BlueThermalPrinter {
     String rightFormated = right;
 
     if (left.length > totalChar) {
-      if (left.length + right.length <= 42) {
+      if (left.length + right.length <= BlueThermalPrinter.fixedCharLength) {
         leftChar = left.length;
         rightChar -= leftChar - totalChar;
       } else {
@@ -41,7 +41,7 @@ class BlueThermalPrinter {
     }
 
     if (right.length > totalChar) {
-      if (right.length + left.length <= 42) {
+      if (right.length + left.length <= BlueThermalPrinter.fixedCharLength) {
         rightChar = right.length;
         leftChar -= rightChar - totalChar;
       } else {
@@ -49,8 +49,8 @@ class BlueThermalPrinter {
       }
     }
 
-    return sprintf("%-${totalChar ~/ 2}s%${totalChar ~/ 2}s",
-        [leftFormated, rightFormated]);
+    return sprintf(
+        "%-${leftChar}s%${rightChar}s", [leftFormated, rightFormated]);
   }
 
   static const String namespace = 'blue_thermal_printer';
