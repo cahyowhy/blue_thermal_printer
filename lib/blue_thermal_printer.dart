@@ -17,18 +17,18 @@ class BlueThermalPrinter {
 
   /// options for paper size 48, 58, 80
   /// you can change this sakkarepmu
-  static int paperSize = 48;
+  int paperSize = 48;
 
-  static int get fixedCharLength {
+  int get fixedCharLength {
     return paperSize - 6;
   }
 
-  static setPaperSize({int size = 48}) {
-    BlueThermalPrinter.paperSize = size;
+  setPaperSize({int size = 48}) {
+    BlueThermalPrinter.instance.paperSize = size;
   }
 
   static String printCustomLeftRight(String left, String right) {
-    int totalChar = BlueThermalPrinter.fixedCharLength ~/ 2;
+    int totalChar = BlueThermalPrinter.instance.fixedCharLength ~/ 2;
     int leftChar = totalChar;
     int rightChar = totalChar;
 
@@ -36,7 +36,7 @@ class BlueThermalPrinter {
     String rightFormated = right;
 
     if (left.length > totalChar) {
-      if (left.length + right.length <= BlueThermalPrinter.fixedCharLength) {
+      if (left.length + right.length <= BlueThermalPrinter.instance.fixedCharLength) {
         leftChar = left.length;
         rightChar -= leftChar - totalChar;
       } else {
@@ -45,7 +45,7 @@ class BlueThermalPrinter {
     }
 
     if (right.length > totalChar) {
-      if (right.length + left.length <= BlueThermalPrinter.fixedCharLength) {
+      if (right.length + left.length <= BlueThermalPrinter.instance.fixedCharLength) {
         rightChar = right.length;
         leftChar -= rightChar - totalChar;
       } else {
