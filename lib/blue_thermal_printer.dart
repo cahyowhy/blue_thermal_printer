@@ -17,10 +17,14 @@ class BlueThermalPrinter {
 
   /// options for paper size 48, 58, 80
   /// you can change this sakkarepmu
-  static const int PAPERSIZE = 48;
+  static int paperSize = 48;
 
   static int get fixedCharLength {
-    return PAPERSIZE - 6;
+    return paperSize - 6;
+  }
+
+  static setPaperSize({int size = 48}) {
+    BlueThermalPrinter.paperSize = size;
   }
 
   static String printCustomLeftRight(String left, String right) {
@@ -132,7 +136,7 @@ class BlueThermalPrinter {
       _channel.invokeMethod('printImage', {
         'pathImage': pathImage,
         'align': align,
-        'paperSize': PAPERSIZE,
+        'paperSize': paperSize,
         'yPadding': yPadding
       });
 
