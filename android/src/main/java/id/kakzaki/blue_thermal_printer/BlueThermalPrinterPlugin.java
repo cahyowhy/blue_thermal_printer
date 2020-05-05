@@ -582,27 +582,7 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
             int finalPaperSize = paperSize * 8; //8 dot matrixs
 
             if (bmp != null) {
-                int xPadding = (finalPaperSize - bmp.getWidth()) / 2;
-
-                switch (align) {
-                    case 0:
-                        // left align
-                        xPadding = 0;
-                        break;
-                    case 2:
-                        // right align
-                        xPadding = finalPaperSize - bmp.getWidth();
-                        break;
-                    default:
-                        // center
-                        break;
-                }
-
-                Bitmap bmpFinal = Utils.pad(bmp, xPadding, yPadding, finalPaperSize);
-
-                byte[] command = Utils.decodeBitmap(bmpFinal);
-
-                THREAD.write(command);
+                THREAD.write(this.giveAlignImage(bmp, align, finalPaperSize, yPadding));
             } else {
                 Log.e("Print Photo error", "the file isn't exists");
             }
@@ -614,6 +594,26 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
         }
     }
 
+    private byte[] giveAlignImage(Bitmap bmp, int align, int finalWidth, int yPadding) {
+        int xPadding = (finalWidth - bmp.getWidth()) / 2;
+
+        switch (align) {
+            case 0:
+                // left align
+                xPadding = 0;
+                break;
+            case 2:
+                // right align
+                xPadding = finalWidth - bmp.getWidth();
+                break;
+            default:
+                // center
+                break;
+        }
+
+        return Utils.decodeBitmap(Utils.pad(bmp, xPadding, yPadding, finalWidth));
+    }
+
     private void printQRcode(Result result, String textToQR, int width, int height, int align) {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         if (THREAD == null) {
@@ -621,27 +621,12 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
             return;
         }
         try {
-            switch (align) {
-                case 0:
-                    // left align
-                    THREAD.write(PrinterCommands.ESC_ALIGN_LEFT);
-                    break;
-                case 1:
-                    // center align
-                    THREAD.write(PrinterCommands.ESC_ALIGN_CENTER);
-                    break;
-                case 2:
-                    // right align
-                    THREAD.write(PrinterCommands.ESC_ALIGN_RIGHT);
-                    break;
-            }
             BitMatrix bitMatrix = multiFormatWriter.encode(textToQR, BarcodeFormat.QR_CODE, width, height);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bmp = barcodeEncoder.createBitmap(bitMatrix);
 
             if (bmp != null) {
-                byte[] command = Utils.decodeBitmap(bmp);
-                THREAD.write(command);
+                THREAD.write(this.giveAlignImage(bmp, align, width, 0));
             } else {
                 Log.e("Print Photo error", "the file isn't exists");
             }
