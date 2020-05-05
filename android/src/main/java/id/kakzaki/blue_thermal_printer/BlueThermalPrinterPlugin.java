@@ -259,7 +259,9 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
                     int width = (int) arguments.get("width");
                     int height = (int) arguments.get("height");
                     int align = (int) arguments.get("align");
-                    printQRcode(result, textToQR, width, height, align);
+                    int paperSize = (int) arguments.get("paperSize");
+
+                    printQRcode(result, textToQR, width, height, align, paperSize);
                 } else {
                     result.error("invalid_argument", "argument 'textToQR' not found", null);
                 }
@@ -614,7 +616,7 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
         return Utils.decodeBitmap(Utils.pad(bmp, xPadding, yPadding, finalWidth));
     }
 
-    private void printQRcode(Result result, String textToQR, int width, int height, int align) {
+    private void printQRcode(Result result, String textToQR, int width, int height, int align, int paperSize) {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         if (THREAD == null) {
             result.error("write_error", "not connected", null);
@@ -626,7 +628,7 @@ public class BlueThermalPrinterPlugin implements MethodCallHandler, RequestPermi
             Bitmap bmp = barcodeEncoder.createBitmap(bitMatrix);
 
             if (bmp != null) {
-                THREAD.write(this.giveAlignImage(bmp, align, width, 0));
+                THREAD.write(this.giveAlignImage(bmp, align, paperSize * 8, 0));
             } else {
                 Log.e("Print Photo error", "the file isn't exists");
             }
